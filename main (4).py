@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 import requests
 import urllib.parse  # Untuk URL encoding
 import json
+import os
 
 app = Flask(__name__)
 
@@ -9,7 +10,7 @@ app = Flask(__name__)
 BASE_URL = "https://app.nocodb.com"
 TABLE_ID = "mgcg430t15let75"
 VIEW_ID = "vw03jsmpyql7yd43"
-NOCO_API_KEY = "8xJwzMGsZTlhm4i-PBEkvz7Z0CFdOssqSGgAr2rG"  # API token anda
+NOCO_API_KEY = os.getenv("NOCO_API_KEY", "")  # API token dari pemboleh ubah persekitaran
 
 HEADERS = {
     "xc-token": NOCO_API_KEY,
@@ -53,7 +54,7 @@ def update_sentimen_in_nocodb(pair, new_sentimen):
     print(f"[INFO] Proses kemas kini untuk pair='{pair}' kepada sentimen='{new_sentimen}'")
 
     # --- LANGKAH 1: Cari rekod ---
-    encoded_pair = urllib.parse.quote(pair)
+    encoded_pair = urllib.parse.quote(pair, safe='')
     search_url = f"{BASE_URL}/api/v2/tables/{TABLE_ID}/records?where=(pair,eq,{encoded_pair})&viewId={VIEW_ID}"
     print(f"[INFO] GET URL: {search_url}")
 
